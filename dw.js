@@ -4386,7 +4386,7 @@ dw.vtable = function(container, options){
 
 
 
-	dv.ivar(vtable, [{name:'page', initial:0}, {name:'page_length', initial:25}])
+	dv.ivar(vtable, [{name:'page', initial:0}, {name:'page_length', initial:50}])
 
 	vtable.table = function(t){
 
