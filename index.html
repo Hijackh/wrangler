@@ -110,7 +110,6 @@ $(document).ready(function() {
 	}
 	else{
 
-
 		jQuery('#preview').hide()
 
 		var upload = dw.jq('div').attr('id', 'uploadContainer')
@@ -132,12 +131,12 @@ $(document).ready(function() {
 		var inputArea = dw.jq('textArea').attr('id','wranglerInput');
 		upload.append(inputArea)
 
-		inputArea.attr('value', crime)		
+		inputArea.attr('value', crime)	//input file	
 
 		jQuery('button').click(function(){
 			var val = inputArea.attr(
 				'value');
-
+			console.log(val);    //input
 			var dt = dv.table(val)
 
 			initial_transforms = dw.raw_inference(val).transforms
