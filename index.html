@@ -73,7 +73,7 @@ $(document).ready(function() {
 	}
 	var startWrangler_plus = function(dt){
 
-		dw.wrangler({
+		dw.wrangler_plus({
 			tableContainer:container,
 			table:dt,
 			transformContainer:jQuery('#transformEditor'),
@@ -154,7 +154,8 @@ $(document).ready(function() {
 			var dt = dv.table(val)
 
 			initial_transforms = dw.raw_inference(val).transforms
-			startWrangler_plus(dt);
+			startWrangler_plus(dt)
+			
 			startWrangler(dt)			
 		})
 		
