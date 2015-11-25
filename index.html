@@ -133,10 +133,21 @@ $(document).ready(function() {
 
 		inputArea.attr('value', crime)	//input file	
 
+
+
+
+
+
+
+
 		jQuery('button').click(function(){
+
+			var file = new XMLHttpRequest();
+    		file.open("GET",url,true);
+    		file.send();
+
 			var val = inputArea.attr(
 				'value');
-			console.log(val);    //input
 			var dt = dv.table(val)
 
 			initial_transforms = dw.raw_inference(val).transforms
@@ -182,6 +193,8 @@ $(document).ready(function() {
 	
 	
 	<body id="dt_example">
+
+
 		
 			<div class="ui-layout-north" id='wranglerNorthPanel'>
 
