@@ -16,6 +16,7 @@
 <script type="text/javascript" src="lib/d3/d3.min.js">  </script>
 <script type="text/javascript" src="lib/datavore/datavore-r0.1.js">  </script>
 <script type="text/javascript" src="dw.js">  </script>
+<script type="text/javascript" src="dw_plus.js">  </script>
 <script type="text/javascript" src="test/crime.js">  </script>
 
 <script type="text/javascript">  
@@ -51,7 +52,7 @@ $(document).ready(function() {
 	});
 
 	
-	
+
 
 	var container = jQuery('#table')
 	var previewContainer = jQuery('#preview')
@@ -61,6 +62,20 @@ $(document).ready(function() {
 	var startWrangler = function(dt){
 
 		dw.wrangler({
+			tableContainer:container,
+			table:dt,
+			transformContainer:jQuery('#transformEditor'),
+			previewContainer:previewContainer,
+      dashboardContainer:jQuery("#wranglerDashboard"),
+			initial_transforms:initial_transforms
+		})
+
+	}
+
+	
+	var startWrangler_plus = function(dt){
+
+		dw.wrangler_plus({
 			tableContainer:container,
 			table:dt,
 			transformContainer:jQuery('#transformEditor'),
@@ -149,10 +164,13 @@ $(document).ready(function() {
 			var val = inputArea.attr(
 				'value');
 			var dt = dv.table(val)
-
+			console.log(dt);
 			initial_transforms = dw.raw_inference(val).transforms
+			
+			var dt1 = dt.slice()
+			startWrangler(dt)
 
-			startWrangler(dt)			
+			startWrangler_plus(dt1)			
 		})
 		
 	}
