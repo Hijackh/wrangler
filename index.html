@@ -52,7 +52,7 @@ $(document).ready(function() {
 	});
 
 	
-	
+
 
 	var container = jQuery('#table')
 	var previewContainer = jQuery('#preview')
@@ -71,6 +71,8 @@ $(document).ready(function() {
 		})
 
 	}
+
+	
 	var startWrangler_plus = function(dt){
 
 		dw.wrangler_plus({
@@ -152,11 +154,13 @@ $(document).ready(function() {
 				'value');
 
 			var dt = dv.table(val)
-
+			console.log(dt);
 			initial_transforms = dw.raw_inference(val).transforms
-			startWrangler_plus(dt)
 			
-			startWrangler(dt)			
+			var dt1 = dt.slice()
+			startWrangler(dt)
+
+			startWrangler_plus(dt1)			
 		})
 		
 	}

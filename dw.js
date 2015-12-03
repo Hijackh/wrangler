@@ -4235,8 +4235,10 @@ dw.preview = function(vtable, table, transform, afterTable, tableSelection){
 		
 
 		vtable.schema_table(table).table(table).draw()
+		
 	}
 	tableSelection.draw();
+
 	
 	jQuery('.unclickable').unbind('mouseup').unbind('mousedown')
 }
@@ -8001,12 +8003,14 @@ dw.transform_editor = function(container, transform, options){
 	
 	return editor;
 }
+var table;
 dw.wrangler = function(options){
-	var tContainer = options.tableContainer, previewContainer = options.previewContainer, transformContainer = options.transformContainer, table = options.table, originalTable = table.slice(), temporaryTable, vtable, afterTable, transform,
-		engine, suggestions, editor, wrangler = {}, script, w = dw.wrangle(), tableSelection, scriptContainer = jQuery(document.createElement('div')).attr('id','scriptContainer'), editorContainer = jQuery(document.createElement('div')).attr('id','editorContainer'), dashboardContainer = options.dashboardContainer;
+	var tContainer = options.tableContainer, previewContainer = options.previewContainer, transformContainer = options.transformContainer  
+	table = options.table
+	var originalTable = table.slice(), temporaryTable, vtable, afterTable, transform,
+		 engine,suggestions, editor, wrangler = {}, script, w = dw.wrangle(), tableSelection, scriptContainer = jQuery(document.createElement('div')).attr('id','scriptContainer'), editorContainer = jQuery(document.createElement('div')).attr('id','editorContainer'), dashboardContainer = options.dashboardContainer;
 
 	
-
 	
 	if(options.initial_transforms){
 		options.initial_transforms.forEach(function(t){
@@ -8014,23 +8018,32 @@ dw.wrangler = function(options){
 		})
 		w.apply([table]);
 	}
+	if(options.plus) {
+		engine = dw.engine().table(table);
+		
 
-	transformContainer.append(editorContainer).append(scriptContainer)
+	}else {
+		transformContainer.append(editorContainer).append(scriptContainer)
 
-	engine = dw.engine().table(table);
-
-	var transform_menu = dw.transform_menu(dashboardContainer, {interaction:interaction, onclear:clear_editor, onedit:interaction, table:undefined})
-
+		engine = dw.engine().table(table);
+	//temp = engine
+		var transform_menu_plus = dwp.transform_menu()
+		var transform_menu = dw.transform_menu(dashboardContainer, {interaction:interaction, onclear:clear_editor, onedit:interaction, table:undefined})
+	}
 
 	function interaction(params){
-
+		//console.log(table)
 		dw.log(params)
-		var selection = tableSelection.add(params);
+		//console.log(table)
 
+		var selection = tableSelection.add(params);
+		//console.log("lalalal")
+		//console.log(table)
 		params.rows = selection.rows();
 		params.cols = selection.cols();
 		suggestions = engine.table(table).input(params).run(13);
 		transform = suggestions[0];
+
 
 		drawEditor();
 
@@ -8084,6 +8097,7 @@ dw.wrangler = function(options){
 		typeTransforms.forEach(function(t){
 			t.sample_apply([table])
 		})
+		//console.log(table)
 	}
 
 	function table_change(){
@@ -8152,15 +8166,19 @@ dw.wrangler = function(options){
 
 	wrangler.draw = function(){
 		suggestions = engine.table(table).run();
+		//console.log(table)
 		drawTable();
 		drawEditor()
 		drawScript()
+		//console.log(table)
 	}
 
 
 
 	function drawTable(){
 		preview(transform);
+		//console.log("Table")
+		//console.log(transform)
 	}
 
 	function drawEditor(){
@@ -8299,6 +8317,11 @@ dw.wrangler = function(options){
 		wrangler.draw();
 
 	}
+	function updateExport(){
+		dt = dwp.processQueue[0];
+		startWrangler_update(dt);
+
+	}
 
 	function drawScript(){
 		var scrollTop = jQuery('#scriptTransformContainer').scrollTop();
@@ -8311,7 +8334,7 @@ dw.wrangler = function(options){
 
 
 			},
-			onexport:exportTable,
+			onexport:updateExport,
 			onedit:script_interaction,
 			table:table
 
@@ -8325,6 +8348,8 @@ dw.wrangler = function(options){
 
 	function preview(transform){
 		dw.preview(vtable, table, transform, afterTable, tableSelection);
+		//console.log("preview")
+		//console.log(afterTable)
 	}
 
 
@@ -8375,10 +8400,6 @@ dw.wrangler = function(options){
 	})
 
 	infer_schema()
-
-
-
-
 	wrangler.draw();
 
 
