@@ -58,7 +58,7 @@ dwp.groupEigenvector = function(eigenvector,chunkID,table) {
 
 var initial_transforms_plus
 
-dw.wrangler_plus = function(options,chunkID){
+dwp.wrangler = function(options,chunkID){
 	var tContainer = options.tableContainer, previewContainer = options.previewContainer, transformContainer = options.transformContainer, table = options.table, originalTable = table.slice(), temporaryTable, vtable, afterTable, transform,
 		engine, suggestions, editor, wrangler = {}, script, w = dw.wrangle(), tableSelection, scriptContainer = jQuery(document.createElement('div')).attr('id','scriptContainer'), editorContainer = jQuery(document.createElement('div')).attr('id','editorContainer'), dashboardContainer = options.dashboardContainer;
 	console.log(table);
@@ -101,7 +101,7 @@ dw.wrangler_plus = function(options,chunkID){
 
 }
 
-var tid = setTimeout(mycode, 2000);
+//var tid = setTimeout(mycode, 2000);
 function mycode() {
       var groupCount = dwp.eigenvectors.length
 	var group = dwp.groupEigenvector(dwp.eigenvectors[0],1);
@@ -180,9 +180,11 @@ dwp.transform_menu = function(){
 	
 	var options = {}, interaction = options.interaction, transforms = [
 		{name:'Title', sub:[{name:'DataWranglerPlus', context : 'DataWranglerPlus'}]},
+		{name:'Chunk', sub:[{name:'PDatasourceNum',context : 'Datasource Processed : '+ processedCounter}]},	
 		{name:'Chunk', sub:[{name:'DatasourceNum',context : 'Datasource Detected : 0'}]},
-		{name:'Chunk', sub:[{name:'ChunkState',context : 'Chunk Processed : 0/10000'}]}		
-		
+		{name:'Chunk', sub:[{name:'ChunkState',context : 'Chunk Processed : '+ chunkCounter + '/10000'}]}		
+	
+
 	];
 	
 	var vis = d3.select('#'+ "wranglerDashboard"), editor = dw.jq('div').addClass('detail_editor_container')

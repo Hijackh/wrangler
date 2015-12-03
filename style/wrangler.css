@@ -464,7 +464,7 @@ div.title  {
 	height:100%;
 	cursor:pointer;
 }
-#ChunkState,#DatasourceNum {
+#ChunkState,#DatasourceNum,#PDatasourceNum{
 	float :right;
 }
 
