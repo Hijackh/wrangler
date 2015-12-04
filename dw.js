@@ -8019,8 +8019,13 @@ dw.wrangler = function(options){
 		w.apply([table]);
 	}
 	if(options.plus) {
+		transformContainer.empty();
+		transformContainer.append(editorContainer).append(scriptContainer)
 		engine = dw.engine().table(table);
-		
+		dashboardContainer.empty();
+		var transform_menu_plus = dwp.transform_menu()
+		var transform_menu = dw.transform_menu(dashboardContainer, {interaction:interaction, onclear:clear_editor, onedit:interaction, table:undefined})
+
 
 	}else {
 		transformContainer.append(editorContainer).append(scriptContainer)
@@ -8318,8 +8323,33 @@ dw.wrangler = function(options){
 
 	}
 	function updateExport(){
-		dt = dwp.processQueue[0];
-		startWrangler_update(dt);
+		var dt = dwp.processQueue[0];
+		//var DatasourceNum = document.getElementById("PDatasourceNum")
+		processedCounter++;
+		startWrangler(dt);
+		
+		
+		//DatasourceNum.innerHTML = "Datasource Processed : " + processedCounter;
+
+
+	}
+
+	var container = jQuery('#table')
+	var previewContainer = jQuery('#preview')
+
+	var initial_transforms = dw.raw_inference('crime').transforms;
+
+	var startWrangler = function(dt){
+
+		dw.wrangler({
+			tableContainer:container,
+			table:dt,
+			transformContainer:jQuery('#transformEditor'),
+			previewContainer:previewContainer,
+      dashboardContainer:jQuery("#wranglerDashboard"),
+			initial_transforms:initial_transforms,
+			plus: true
+		})
 
 	}
 

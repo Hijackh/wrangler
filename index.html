@@ -73,16 +73,16 @@ $(document).ready(function() {
 	}
 
 	
-	var startWrangler_plus = function(dt){
+	var startWrangler_plus = function(dt,chunkID){
 
-		dw.wrangler_plus({
+		dwp.wrangler({
 			tableContainer:container,
 			table:dt,
 			transformContainer:jQuery('#transformEditor'),
 			previewContainer:previewContainer,
       dashboardContainer:jQuery("#wranglerDashboard"),
 			initial_transforms:initial_transforms
-		})
+		},chunkID)
 
 	}
 
