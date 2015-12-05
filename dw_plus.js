@@ -2,13 +2,16 @@ var dwp ={}
 
 dwp.eigenvectors = [];
 dwp.processQueue = [];
+dwp.numOfChunk = 0;
 
 dwp.addEigenvector = function(eigenvector,chunkID,group,table) {
 	if(dwp.eigenvectors.length == group) {
 		var group0 = [chunkID];
 		dwp.chunkGroup.push(group0);
 		dwp.eigenvectors.push(eigenvector);
-		dwp.processQueue.push(table);
+		if(group != 0) {
+			dwp.processQueue.push(table);
+		}
 	}else {
 		var num = dwp.chunkGroup[group].length;
 		dwp.chunkGroup[group].push(chunkID);
@@ -23,6 +26,7 @@ dwp.addEigenvector = function(eigenvector,chunkID,group,table) {
 }
 dwp.eigenvectorThreshold = 0.2;
 dwp.chunkGroup = [];
+dwp.scriptGroup = [];
 var chunkCounter = 0;
 var processedCounter = 0;
 dwp.groupEigenvector = function(eigenvector,chunkID,table) {
@@ -59,8 +63,10 @@ dwp.groupEigenvector = function(eigenvector,chunkID,table) {
 var initial_transforms_plus
 
 dwp.wrangler = function(options,chunkID){
+	dwp.numOfChunk++;
 	var tContainer = options.tableContainer, previewContainer = options.previewContainer, transformContainer = options.transformContainer, table = options.table, originalTable = table.slice(), temporaryTable, vtable, afterTable, transform,
 		engine, suggestions, editor, wrangler = {}, script, w = dw.wrangle(), tableSelection, scriptContainer = jQuery(document.createElement('div')).attr('id','scriptContainer'), editorContainer = jQuery(document.createElement('div')).attr('id','editorContainer'), dashboardContainer = options.dashboardContainer;
+	console.log("table")
 	console.log(table);
 	initial_transforms_plus = options.initial_transforms
 	if(options.initial_transforms){
@@ -84,11 +90,11 @@ dwp.wrangler = function(options,chunkID){
 			}
 		})
     var groupCount = dwp.eigenvectors.length
-	var group = dwp.groupEigenvector(eigenvector,1,originalTable);
+	var group = dwp.groupEigenvector(eigenvector,chunkID,originalTable);
 	console.log("Queue")
 	console.log(dwp.processQueue[0])
 	var chunkState = document.getElementById("ChunkState")
-	chunkState.innerHTML = "Chunk Processed : " + chunkCounter + "/10000";
+	chunkState.innerHTML = "Chunk Processed : " + chunkCounter + "/" + dwp.numOfChunk;
 	if(groupCount == group) {
 		var DatasourceNum = document.getElementById("DatasourceNum")
 		groupCount++
@@ -113,7 +119,7 @@ function mycode() {
 		groupCount++
 		DatasourceNum.innerHTML = "Datasource Detected : " + groupCount;
 	}
-  tid = setTimeout(mycode, 2000); // repeat myself
+  //tid = setTimeout(mycode, 2000); // repeat myself
 }
 
 
@@ -181,7 +187,7 @@ dwp.transform_menu = function(){
 	var options = {}, interaction = options.interaction, transforms = [
 		{name:'Title', sub:[{name:'DataWranglerPlus', context : 'DataWranglerPlus'}]},
 		{name:'Chunk', sub:[{name:'PDatasourceNum',context : 'Datasource Processed : '+ processedCounter}]},	
-		{name:'Chunk', sub:[{name:'DatasourceNum',context : 'Datasource Detected : 0'}]},
+		{name:'Chunk', sub:[{name:'DatasourceNum',context : 'Datasource Detected : ' + dwp.eigenvectors.length}]},
 		{name:'Chunk', sub:[{name:'ChunkState',context : 'Chunk Processed : '+ chunkCounter + '/10000'}]}		
 	
 
