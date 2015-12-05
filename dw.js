@@ -8327,6 +8327,8 @@ dw.wrangler = function(options){
 		//var DatasourceNum = document.getElementById("PDatasourceNum")
 		processedCounter++;
 		startWrangler(dt);
+		console.log(dw.wrangler_export(table, {format:'python', wrangler:w}))
+
 		
 		
 		//DatasourceNum.innerHTML = "Datasource Processed : " + processedCounter;
@@ -8364,7 +8366,7 @@ dw.wrangler = function(options){
 
 
 			},
-			onexport:updateExport,
+			onexport:exportTable,
 			onedit:script_interaction,
 			table:table
 
