@@ -4388,7 +4388,7 @@ dw.vtable = function(container, options){
 
 
 
-	dv.ivar(vtable, [{name:'page', initial:0}, {name:'page_length', initial:25}])
+	dv.ivar(vtable, [{name:'page', initial:0}, {name:'page_length', initial:50}])
 
 	vtable.table = function(t){
 
@@ -8323,13 +8323,20 @@ dw.wrangler = function(options){
 
 	}
 	function updateExport(){
-		var dt = dwp.processQueue[0];
+		var dt = dwp.processQueue.shift();
+		if(dt === undefined) {
+			alert("job done!")
+		}else {
 		//var DatasourceNum = document.getElementById("PDatasourceNum")
+
 		processedCounter++;
 		startWrangler(dt);
 		console.log(dw.wrangler_export(table, {format:'python', wrangler:w}))
 
 		
+
+		}
+
 		
 		//DatasourceNum.innerHTML = "Datasource Processed : " + processedCounter;
 

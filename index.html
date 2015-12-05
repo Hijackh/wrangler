@@ -125,20 +125,16 @@ $(document).ready(function() {
 	}
 	else{
 
-
 		jQuery('#preview').hide()
 
 		var upload = dw.jq('div').attr('id', 'uploadContainer')
 		
 		
-		var select = dw.jq('select').addClass('wranglerExampleOptions');
-		var selectPrompt = dw.jq('span').append('Example Data:').addClass('wranglerPrompt');
 		jQuery('#table').append(upload)
 
 		var prompt = dw.jq('div').attr('id','uploadPrompt').append('Paste data below to begin wrangling').addClass('wranglerPrompt');
 		upload.append(prompt)
 		
-		upload.append(selectPrompt).append(select)
 
 		upload.append(dw.jq('button').attr('id','wranglerInputSubmit').append('Wrangle'))
 		
@@ -147,38 +143,61 @@ $(document).ready(function() {
 		var inputArea = dw.jq('textArea').attr('id','wranglerInput');
 		upload.append(inputArea)
 
-		inputArea.attr('value', crime)		
+
+
+
 
 		jQuery('button').click(function(){
-			var val = inputArea.attr(
-				'value');
 
-			var dt = dv.table(val)
-			console.log(dt);
-			initial_transforms = dw.raw_inference(val).transforms
+
+			var url = inputArea.attr('value');
+			var rawFile = new XMLHttpRequest();
+    		rawFile.open("GET",url,true);
+    		rawFile.onreadystatechange = function (){
+        		if(rawFile.readyState === 4){
+            		if(rawFile.status === 200 || rawFile.status == 0){
+                		var val = rawFile.responseText;
+                		var lines = val.split("\n")
+                		var lineLimit = 10
+                		var result = []
+                		var item = ""
+                		var i = 0;
+    					while (i < lines.length) {
+    						if (i % lineLimit == 0 && item.length != 0) {
+    							result.push(item)
+    							item = ""
+    						}
+    						item = item.concat(lines[i])
+    						item = item.concat("\n")
+    						i++;
+    					}
+    					if (item.length != 0) {
+    						result.push(item)
+    					}
+           				i = 0
+          				while( i < result.length) {
+          					//console.log(result[i]);
+          					var dt = dv.table(result[i])
+
+							initial_transforms = dw.raw_inference(result[i]).transforms
+							
+
+							var dt1 = dt.slice()
+							if(i == 0) {
+								startWrangler(dt)
+							}
+							startWrangler_plus(dt1, i)	
+							i++;
+          				}
+            		}
+        		}
+    		}
+    		rawFile.send(null);
+
 			
-			var dt1 = dt.slice()
-			startWrangler(dt)
-
-			startWrangler_plus(dt1)			
 		})
 		
 	}
-
-
-		var add_export_option = function(type, name){
-			dw.add_select_option(select, name, type);
-		}
-		
-		select.change(function(){
-			inputArea.attr('value', select.val())
-			jQuery('.exportHeader').removeClass('selectedExportHeader');				
-			jQuery(this).addClass('selectedExportHeader')
-			
-		})
-		add_export_option(crime, 'Crime');
-		add_export_option(labor, 'Labor');
-		add_export_option(migration, 'Migration');
 
 })
 
@@ -201,6 +220,8 @@ $(document).ready(function() {
 	
 	
 	<body id="dt_example">
+
+
 		
 			<div class="ui-layout-north" id='wranglerNorthPanel'>
 
