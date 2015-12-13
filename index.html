@@ -156,9 +156,12 @@ $(document).ready(function() {
     		rawFile.onreadystatechange = function (){
         		if(rawFile.readyState === 4){
             		if(rawFile.status === 200 || rawFile.status == 0){
-                		var val = rawFile.responseText;
-                		var lines = val.split("\n")
-                		var lineLimit = 10
+                		var data = rawFile.responseText;
+						console.log(data);
+
+
+                		var lines = data.split("\n")
+                		var lineLimit = 20
                 		var result = []
                 		var item = ""
                 		var i = 0;
@@ -180,7 +183,7 @@ $(document).ready(function() {
           					var dt = dv.table(result[i])
 
 							initial_transforms = dw.raw_inference(result[i]).transforms
-							
+
 
 							var dt1 = dt.slice()
 							if(i == 0) {

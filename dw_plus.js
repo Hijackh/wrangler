@@ -3,6 +3,7 @@ var dwp ={}
 dwp.eigenvectors = [];
 dwp.processQueue = [];
 dwp.numOfChunk = 0;
+dwp.chunks = {};
 
 dwp.addEigenvector = function(eigenvector,chunkID,group,table) {
 	if(dwp.eigenvectors.length == group) {
@@ -66,8 +67,10 @@ dwp.wrangler = function(options,chunkID){
 	dwp.numOfChunk++;
 	var tContainer = options.tableContainer, previewContainer = options.previewContainer, transformContainer = options.transformContainer, table = options.table, originalTable = table.slice(), temporaryTable, vtable, afterTable, transform,
 		engine, suggestions, editor, wrangler = {}, script, w = dw.wrangle(), tableSelection, scriptContainer = jQuery(document.createElement('div')).attr('id','scriptContainer'), editorContainer = jQuery(document.createElement('div')).attr('id','editorContainer'), dashboardContainer = options.dashboardContainer;
-	console.log("table")
-	console.log(table);
+	//console.log("table")
+	//console.log(table);
+	dwp.chunks[chunkID] = table;
+	console.log(dwp.chunks);
 	initial_transforms_plus = options.initial_transforms
 	if(options.initial_transforms){
 		options.initial_transforms.forEach(function(t){
@@ -113,7 +116,7 @@ function mycode() {
 	var group = dwp.groupEigenvector(dwp.eigenvectors[0],1);
 	
 	var chunkState = document.getElementById("ChunkState")
-	chunkState.innerHTML = "Chunk Processed : " + chunkCounter + "/10000";
+	chunkState.innerHTML = "Chunk Processed : " + chunkCounter + "/" + dwp.numOfChunk;
 	if(groupCount == group) {
 		var DatasourceNum = document.getElementById("DatasourceNum")
 		groupCount++
