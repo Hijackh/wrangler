@@ -4983,6 +4983,7 @@ dw.wrangler_export.csv = function(table){
 	for(var r = 0; r < table.rows(); ++r){
 		x+= table.row(r).join(',') + '\n'
 	}
+		console.log(x);
 	return x;
 	
 }
@@ -8324,6 +8325,7 @@ dw.wrangler = function(options){
 	}
 	function updateExport(){
 		var dt = dwp.processQueue.shift();
+		console.log(updateCotents(table));
 		if(dt === undefined) {
 			alert("job done!")
 		}else {
@@ -8335,6 +8337,19 @@ dw.wrangler = function(options){
 		//DatasourceNum.innerHTML = "Datasource Processed : " + processedCounter;
 
 
+	}
+
+	 function updateCotents(table){
+		var x = '';
+	
+		//x+= table.names().map(dw.display_name).join(',')+'\n';
+	
+		for(var r = 0; r < table.rows(); ++r){
+			x+= table.row(r).join(',') + '\n'
+		}
+			console.log(x);
+		return x;
+	
 	}
 
 	var container = jQuery('#table')
