@@ -4983,6 +4983,7 @@ dw.wrangler_export.csv = function(table){
 	for(var r = 0; r < table.rows(); ++r){
 		x+= table.row(r).join(',') + '\n'
 	}
+		console.log(x);
 	return x;
 	
 }
@@ -5125,16 +5126,23 @@ dw.wrangler_export.javascript = function(w){
 \n"
 	
 	var wrangler = 'w = dw.wrangle()\n'
-
-
-
-
-	return preamble + wrangler + w.filter(function(t){return t.active()}).map(function(t){
-		var comment = '\n\/* '+t.comment()+' *\/\n';
-		return comment+'w.add('+parse_javascript_transform(t)+')'
-
+	W = dw.wrangle();
+	w.filter(function(t){return t.active()}).map(function(t){
+		W.add(t)
 		
-	}).join('\n') + exportComment+ exportCode
+	});
+	//console.log("lalalalala")
+	//console.log(table)
+	
+	dwp.scriptGroup.push(W)
+	for (var i = 0; i < dwp.chunkGroup[dwp.scriptGroup.length - 1].length; i++) {
+    	var ttable = []
+		ttable.push(dwp.dataDic[dwp.chunkGroup[dwp.scriptGroup.length - 1][i]])
+		W.apply(ttable)
+    //Do something
+	}
+	//console.log(W.apply(ttable))
+	//console.log(ttable)
 	
 }
 
@@ -6432,6 +6440,7 @@ dw.raw_inference = function(raw_text){
 		singleQuotes = 0,
 		tabs = 0,
 		spaces = 0,
+		colon = 0,
 		pipes = 0;
 	
 	for(var x = 0; x < total; ++x){
@@ -6442,6 +6451,9 @@ dw.raw_inference = function(raw_text){
 			break
 			case ',':
 				commas++
+			break
+			case ':':
+				colon++
 			break
 			case '"':
 				quotes++
@@ -6464,17 +6476,17 @@ dw.raw_inference = function(raw_text){
 	
 	var inference = {}
 	var delimiterStrength = Math.max(commas, tabs, pipes);
-	var cutoff = .8*newlines
+	var cutoff = .4*newlines
 	if(delimiterStrength > cutoff){
 		if(commas >= cutoff){
 			inference.type = 'csv'
 			inference.delimiter = ','
 		}
-		else if(tabs >= cutoff){
+		if(tabs >= cutoff){
 			inference.type = 'tsv'
 			inference.delimiter = '\t'
 		}
-		else if(pipes >= cutoff){
+		if(pipes >= cutoff){
 			inference.type = 'pipes'
 			inference.delimiter = '\\|'
 		}
@@ -8324,23 +8336,35 @@ dw.wrangler = function(options){
 	}
 	function updateExport(){
 		var dt = dwp.processQueue.shift();
+		//console.log(updateCotents(table));
 		if(dt === undefined) {
 			alert("job done!")
 		}else {
 		//var DatasourceNum = document.getElementById("PDatasourceNum")
-
-		processedCounter++;
-		startWrangler(dt);
-		console.log(dw.wrangler_export(table, {format:'python', wrangler:w}))
-
-		
-
+			processedCounter++;
+			startWrangler(dt);
+			//var W = dw.wrangle()
+			//W.add()
+			//dwp.processQueue.push(W)
+			dw.wrangler_export(table, {format:'javascript', wrangler:w})
 		}
-
 		
 		//DatasourceNum.innerHTML = "Datasource Processed : " + processedCounter;
 
 
+	}
+
+	 function updateCotents(table){
+		var x = '';
+	
+		//x+= table.names().map(dw.display_name).join(',')+'\n';
+	
+		for(var r = 0; r < table.rows(); ++r){
+			x+= table.row(r).join(',') + '\n'
+		}
+			console.log(x);
+		return x;
+	
 	}
 
 	var container = jQuery('#table')
@@ -8373,7 +8397,7 @@ dw.wrangler = function(options){
 
 
 			},
-			onexport:exportTable,
+			onexport:updateExport,
 			onedit:script_interaction,
 			table:table
 

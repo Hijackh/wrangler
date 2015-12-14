@@ -83,6 +83,7 @@ $(document).ready(function() {
       dashboardContainer:jQuery("#wranglerDashboard"),
 			initial_transforms:initial_transforms
 		},chunkID)
+		//console.log(initial_transforms)
 
 	}
 
@@ -150,15 +151,19 @@ $(document).ready(function() {
 		jQuery('button').click(function(){
 
 
-			var url = inputArea.attr('value');
+			var url = "file:///Library/WebServer/Documents/wrangler/test/labor.txt"
+			console.log(url)
 			var rawFile = new XMLHttpRequest();
     		rawFile.open("GET",url,true);
     		rawFile.onreadystatechange = function (){
         		if(rawFile.readyState === 4){
             		if(rawFile.status === 200 || rawFile.status == 0){
-                		var val = rawFile.responseText;
-                		var lines = val.split("\n")
-                		var lineLimit = 10
+                		var data = rawFile.responseText;
+						//console.log(data);
+
+
+                		var lines = data.split("\n")
+                		var lineLimit = 50
                 		var result = []
                 		var item = ""
                 		var i = 0;
@@ -175,18 +180,20 @@ $(document).ready(function() {
     						result.push(item)
     					}
            				i = 0
+           				dwp.numOfChunk = result.length
+           				//console.log(result.length)
           				while( i < result.length) {
           					//console.log(result[i]);
           					var dt = dv.table(result[i])
 
 							initial_transforms = dw.raw_inference(result[i]).transforms
-							
+
 
 							var dt1 = dt.slice()
 							if(i == 0) {
 								startWrangler(dt)
 							}
-							startWrangler_plus(dt1, i)	
+							startWrangler_plus(dt1)	
 							i++;
           				}
             		}

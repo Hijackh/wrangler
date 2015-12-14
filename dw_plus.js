@@ -3,6 +3,10 @@ var dwp ={}
 dwp.eigenvectors = [];
 dwp.processQueue = [];
 dwp.numOfChunk = 0;
+//dwp.chunks = {};
+dwp.dataDic = {};
+dwp.split = false
+dwp.chunkCounter = -1
 
 dwp.addEigenvector = function(eigenvector,chunkID,group,table) {
 	if(dwp.eigenvectors.length == group) {
@@ -27,10 +31,10 @@ dwp.addEigenvector = function(eigenvector,chunkID,group,table) {
 dwp.eigenvectorThreshold = 0.2;
 dwp.chunkGroup = [];
 dwp.scriptGroup = [];
-var chunkCounter = 0;
+//var chunkCounter = 0;
 var processedCounter = 0;
-dwp.groupEigenvector = function(eigenvector,chunkID,table) {
-	chunkCounter++;
+dwp.groupEigenvector = function(options,eigenvector,chunkID,table,originalTable) {
+	
 	if(dwp.eigenvectors.length == 0) {
 		dwp.addEigenvector(eigenvector,chunkID,0,table);
 		return 0;
@@ -52,22 +56,132 @@ dwp.groupEigenvector = function(eigenvector,chunkID,table) {
 			} 
 
 		}
-		
-		dwp.addEigenvector(eigenvector,chunkID,group,table);
 
+		if(group != length || dwp.split) {
+			dwp.addEigenvector(eigenvector,chunkID,group,table);
+		}else {
+			dwp.findBoundary(options,table,chunkID,originalTable)
+			//dwp.addEigenvector(eigenvector,chunkID,group,table);
+		}
 
 		return group;
 	}
 }
+var container = jQuery('#table')
+	var previewContainer = jQuery('#preview')
+
+	var initial_transforms = [];
+var startWrangler_plus_ = function(dt){
+		eigenvector = dwp.wrangler_({
+			tableContainer:container,
+			table:dt,
+			transformContainer:jQuery('#transformEditor'),
+			previewContainer:previewContainer,
+      dashboardContainer:jQuery("#wranglerDashboard"),
+			initial_transforms:initial_transforms
+		})
+		return eigenvector
+		//console.log(initial_transforms)
+
+}
+var startWrangler_plus = function(dt,chunkID){
+
+		dwp.wrangler({
+			tableContainer:container,
+			table:dt,
+			transformContainer:jQuery('#transformEditor'),
+			previewContainer:previewContainer,
+      dashboardContainer:jQuery("#wranglerDashboard"),
+			initial_transforms:initial_transforms
+		},chunkID)
+		//console.log(initial_transforms)
+
+	}
+
+dwp.findBoundary = function(options,table,chunkId,originalTable) {
+	var targetingVector = dwp.eigenvectors[dwp.eigenvectors.length -1]
+	//console.log(targetingVector)
+	var lines = originalTable[0][0].split("\n")
+	var length = lines.length;
+	//console.log(length)
+	var boundary = length
+	var topVector = []
+	var topTable = ""
+	while(!dwp.isSame(topVector,targetingVector) && boundary > 10) {
+		boundary = boundary/2
+		topTable = ""
+		for(var i = 0; i<boundary;i++) {
+			topTable = topTable.concat(lines[i])
+    		topTable = topTable.concat("\n")
+		}
+		//console.log(topTable)
+
+		initial_transforms = dw.raw_inference(topTable).transforms
+		var dt = dv.table(topTable)
+		topVector = startWrangler_plus_(dt)
+		//console.log(topVector)
+
+	}
+	initial_transforms = dw.raw_inference(topTable).transforms
+	dwp.numOfChunk++
+	var dt1 = dv.table(topTable)
+	dwp.chunkCounter--
+	startWrangler_plus(dt1)
+	dwp.split = true;
+	var bottomTable = ""
+	//console.log(boundary)
+	for(var i = (boundary|0) +1; i<length;i++) {
+		//console.log(i)
+			bottomTable = bottomTable.concat(lines[i])
+    		bottomTable = bottomTable.concat("\n")
+		}
+	initial_transforms = dw.raw_inference(bottomTable).transforms
+	//console.log(bottomTable)
+	var dt2 = dv.table(bottomTable)
+	//console.log(startWrangler_plus_(dt))
+	startWrangler_plus(dt2)
+	//console.log(dt)
+	dwp.split = false
+
+
+			
+
+		//console.log(initial_transforms)
+		
+		//dwp.wrangler(options,topTable) 
+
+		
+
+		//tryVector = dwp.get_column_stats_plus(table,length)
+		//if(dwp.diff(targetingVector,tryVector))
+	
+}
+dwp.isSame = function(v1,v2) {
+	var threshold = 0.2
+	if(v1.length!=v2.length) {
+		return false
+	}
+	var diff = 0;
+	for(var i = 0;i<v1.length;i++) {
+		diff+= Math.abs(v1[i]-v2[i])
+	}
+	if(diff > threshold) {
+		return false
+	}
+	return true;
+}
 
 var initial_transforms_plus
 
-dwp.wrangler = function(options,chunkID){
-	dwp.numOfChunk++;
+
+dwp.wrangler_ = function(options){
+	//dwp.numOfChunk++;
 	var tContainer = options.tableContainer, previewContainer = options.previewContainer, transformContainer = options.transformContainer, table = options.table, originalTable = table.slice(), temporaryTable, vtable, afterTable, transform,
 		engine, suggestions, editor, wrangler = {}, script, w = dw.wrangle(), tableSelection, scriptContainer = jQuery(document.createElement('div')).attr('id','scriptContainer'), editorContainer = jQuery(document.createElement('div')).attr('id','editorContainer'), dashboardContainer = options.dashboardContainer;
-	console.log("table")
-	console.log(table);
+	//console.log("table")
+	//console.log(options.initial_transforms);
+	//dwp.chunks[chunkID] = table;
+	//console.log(dwp.chunks);
 	initial_transforms_plus = options.initial_transforms
 	if(options.initial_transforms){
 		options.initial_transforms.forEach(function(t){
@@ -79,9 +193,12 @@ dwp.wrangler = function(options,chunkID){
 
 	
 	
-	console.log("startPoint");
+	//console.log("startPoint" + chunkID);
+	//console.log(table);
+	//dwp.dataDic[chunkID] = table;
+
 	var eigenvector = []
-	console.log(table);
+	//console.log(table);
 	table.forEach(function(c, i){
 			var length = c.length;
 			var test = dw.get_column_stats_plus(c,length);
@@ -89,12 +206,54 @@ dwp.wrangler = function(options,chunkID){
 				eigenvector.push(test[i]);
 			}
 		})
+    return eigenvector
+
+
+
+	
+
+}
+
+dwp.wrangler = function(options){
+	dwp.chunkCounter++;
+	//dwp.numOfChunk++;
+	var tContainer = options.tableContainer, previewContainer = options.previewContainer, transformContainer = options.transformContainer, table = options.table, originalTable = table.slice(), temporaryTable, vtable, afterTable, transform,
+		engine, suggestions, editor, wrangler = {}, script, w = dw.wrangle(), tableSelection, scriptContainer = jQuery(document.createElement('div')).attr('id','scriptContainer'), editorContainer = jQuery(document.createElement('div')).attr('id','editorContainer'), dashboardContainer = options.dashboardContainer;
+	//console.log("table")
+	//console.log(options.initial_transforms);
+	//dwp.chunks[dwp.chunkCounter] = table;
+	//console.log(dwp.chunks);
+	initial_transforms_plus = options.initial_transforms
+	if(options.initial_transforms){
+		options.initial_transforms.forEach(function(t){
+			w.add(t);
+		})
+		w.apply([table]);
+	}
+	
+
+	
+	
+	//console.log("startPoint" + chunkID);
+	//console.log(table);
+	dwp.dataDic[dwp.chunkCounter] = table;
+
+	var eigenvector = []
+	//console.log(table);
+	table.forEach(function(c, i){
+			var length = c.length;
+			var test = dw.get_column_stats_plus(c,length);
+			for(var i = 0; i < test.length;i++) {
+				eigenvector.push(test[i]);
+			}
+		})
+	//console.log(eigenvector)
     var groupCount = dwp.eigenvectors.length
-	var group = dwp.groupEigenvector(eigenvector,chunkID,originalTable);
-	console.log("Queue")
-	console.log(dwp.processQueue[0])
+	var group = dwp.groupEigenvector(options,eigenvector,dwp.chunkCounter,table,originalTable);
+	//console.log("Queue")
+	//console.log(dwp.processQueue[0])
 	var chunkState = document.getElementById("ChunkState")
-	chunkState.innerHTML = "Chunk Processed : " + chunkCounter + "/" + dwp.numOfChunk;
+	chunkState.innerHTML = "Chunk Processed : " + (dwp.chunkCounter+1) + "/" + dwp.numOfChunk;
 	if(groupCount == group) {
 		var DatasourceNum = document.getElementById("DatasourceNum")
 		groupCount++
@@ -108,19 +267,7 @@ dwp.wrangler = function(options,chunkID){
 }
 
 //var tid = setTimeout(mycode, 2000);
-function mycode() {
-      var groupCount = dwp.eigenvectors.length
-	var group = dwp.groupEigenvector(dwp.eigenvectors[0],1);
-	
-	var chunkState = document.getElementById("ChunkState")
-	chunkState.innerHTML = "Chunk Processed : " + chunkCounter + "/10000";
-	if(groupCount == group) {
-		var DatasourceNum = document.getElementById("DatasourceNum")
-		groupCount++
-		DatasourceNum.innerHTML = "Datasource Detected : " + groupCount;
-	}
-  //tid = setTimeout(mycode, 2000); // repeat myself
-}
+
 
 
 dw.get_column_stats_plus = function(col, nRows) {
@@ -188,7 +335,7 @@ dwp.transform_menu = function(){
 		{name:'Title', sub:[{name:'DataWranglerPlus', context : 'DataWranglerPlus'}]},
 		{name:'Chunk', sub:[{name:'PDatasourceNum',context : 'Datasource Processed : '+ processedCounter}]},	
 		{name:'Chunk', sub:[{name:'DatasourceNum',context : 'Datasource Detected : ' + dwp.eigenvectors.length}]},
-		{name:'Chunk', sub:[{name:'ChunkState',context : 'Chunk Processed : '+ chunkCounter + '/10000'}]}		
+		{name:'Chunk', sub:[{name:'ChunkState',context : 'Chunk Processed : '+ (dwp.chunkCounter+1) + '/' + dwp.numOfChunk}]}		
 	
 
 	];
@@ -199,7 +346,7 @@ dwp.transform_menu = function(){
 		
 	menu.draw = function(){
 		
-		console.log(transforms)
+		//console.log(transforms)
 		var idx = d3.range(transforms.length)
 
 		var sub = vis.append('div').attr('id', 'menu').selectAll('div.menu_group')
