@@ -3,10 +3,11 @@ var dwp ={}
 dwp.eigenvectors = [];
 dwp.processQueue = [];
 dwp.numOfChunk = 0;
-//dwp.chunks = {};
+
 dwp.dataDic = {};
 dwp.split = false
 dwp.chunkCounter = -1
+
 
 dwp.addEigenvector = function(eigenvector,chunkID,group,table) {
 	if(dwp.eigenvectors.length == group) {
@@ -179,9 +180,7 @@ dwp.wrangler_ = function(options){
 	var tContainer = options.tableContainer, previewContainer = options.previewContainer, transformContainer = options.transformContainer, table = options.table, originalTable = table.slice(), temporaryTable, vtable, afterTable, transform,
 		engine, suggestions, editor, wrangler = {}, script, w = dw.wrangle(), tableSelection, scriptContainer = jQuery(document.createElement('div')).attr('id','scriptContainer'), editorContainer = jQuery(document.createElement('div')).attr('id','editorContainer'), dashboardContainer = options.dashboardContainer;
 	//console.log("table")
-	//console.log(options.initial_transforms);
-	//dwp.chunks[chunkID] = table;
-	//console.log(dwp.chunks);
+
 	initial_transforms_plus = options.initial_transforms
 	if(options.initial_transforms){
 		options.initial_transforms.forEach(function(t){
@@ -253,7 +252,9 @@ dwp.wrangler = function(options){
 	//console.log("Queue")
 	//console.log(dwp.processQueue[0])
 	var chunkState = document.getElementById("ChunkState")
+
 	chunkState.innerHTML = "Chunk Processed : " + (dwp.chunkCounter+1) + "/" + dwp.numOfChunk;
+
 	if(groupCount == group) {
 		var DatasourceNum = document.getElementById("DatasourceNum")
 		groupCount++

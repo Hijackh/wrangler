@@ -8336,7 +8336,7 @@ dw.wrangler = function(options){
 	}
 	function updateExport(){
 		var dt = dwp.processQueue.shift();
-		//console.log(updateCotents(table));
+
 		if(dt === undefined) {
 			alert("job done!")
 		}else {

@@ -1,4 +1,3 @@
-
 Series Id| LNU02000000
 Series title| (Unadj) Employment Level
 Labor force status| Employed
